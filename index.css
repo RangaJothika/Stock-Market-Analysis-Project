@@ -1,0 +1,68 @@
+/* general css */
+body{
+background-color: rgb(1, 1, 55);
+color:white;
+}
+
+h1{
+    color: white;
+    text-align: center;
+    margin:60px;
+    font-size: 50px;
+}
+#ChartwithList{
+    display:grid;
+    grid-template-columns: repeat(2,1fr);
+}
+/* #chart-section #buttons{
+background-color: rgb(2, 2, 67);
+border-radius: 10px;
+} */
+/* chart css */
+#chart{
+    background-color:rgb(3, 3, 90) ;
+    width:90%;
+    justify-self: center;
+ }
+
+/* StockList css */
+#list{
+    justify-self: center;
+}
+li{
+    color:white;
+    list-style-type:none;
+    margin:10px;
+    font-size:23px;
+    display:flex;
+    gap:15px;
+}
+li button{
+    background-color: blue;
+    box-shadow: -2px -2px 2px white;
+    width:80px;
+    height:35px;
+    color: white;
+    border-radius: 6px;
+}
+li button:hover{
+    background-color:rgb(1, 1, 55) ;
+}
+li .bookValue{
+    width:70px;
+}
+.profit{
+color:green;
+}
+.zeroprofit{
+    color:red!important;
+}
+
+/* summary css */
+h2{
+    display: flex;
+    gap:20px;
+}
+p{
+    color:white;
+}
