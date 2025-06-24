@@ -3,12 +3,13 @@ let chartStock = {};
 displayStockList();
 
 async function getStockList1() {
-    return await fetch("https://stocksapi-uhe1.onrender.com/api/stocks/getstockstatsdata")
+    return await fetch("https://mocki.io/v1/a8a7e040-aa37-4451-bca3-e561868ec0e7")
         .then((stock) => stock.json())
         .then((a) => {
             // console.log(a.stocksStatsData[0]);
             return a.stocksStatsData[0];
         })
+        
         .catch((error) => console.log(error));
 }
 
@@ -32,7 +33,7 @@ async function displayStockList() {
 
 async function displaySummary(event) {
     let StockValues = await getStockList1();
-    let stockSummary = await fetch("https://stocksapi-uhe1.onrender.com/api/stocks/getstocksprofiledata")
+    let stockSummary = await fetch("https://mocki.io/v1/643739c6-a043-45f7-9208-239087e003be")
         .then((response) => response.json())
         .then((a) => {
             // console.log(a.stocksProfileData[0])
@@ -66,7 +67,7 @@ async function displaySummary(event) {
 } // Declare globally
 
 async function displayChart(stock = "AAPL", period = "5y", event) {
-    const response = await fetch("https://stocksapi-uhe1.onrender.com/api/stocks/getstocksdata");
+    const response = await fetch("https://mocki.io/v1/3295edc5-d4eb-41d4-931a-4ceb232ff1da");
     const data = await response.json();
     // console.log(data);
     chartStock = data["stocksData"][0]; // Store globally
