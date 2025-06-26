@@ -14,10 +14,6 @@ h1{
     display:grid;
     grid-template-columns: repeat(2,1fr);
 }
-/* #chart-section #buttons{
-background-color: rgb(2, 2, 67);
-border-radius: 10px;
-} */
 /* chart css */
 #chart{
     background-color:rgb(3, 3, 90) ;

@@ -1,22 +1,23 @@
-let chartStock = {};
+let chartStock = {};//this var will be resued across different functions
 
 displayStockList();
 
 async function getStockList1() {
+    // get profit,bookValue of all the stocks
     return await fetch("https://mocki.io/v1/a8a7e040-aa37-4451-bca3-e561868ec0e7")
-        .then((stock) => stock.json())
+        .then((stock) => stock.json())// converts the stock response in json format to a js object
         .then((a) => {
-            // console.log(a.stocksStatsData[0]);
             return a.stocksStatsData[0];
         })
-        
         .catch((error) => console.log(error));
 }
 
+// list section of all stocks,bookValue and profit
 async function displayStockList() {
     let StockValueData = await getStockList1();
     for (let key in StockValueData) {
         if (key != "_id") {
+
             let StockListEle = document.getElementById("StocKList");
             let li = document.createElement("li");
             li.innerHTML = `<button onclick="changeChartAndSummary(event)">${key}</button><span class="bookValue">$${StockValueData[key]["bookValue"]}</span><span class="profit">${StockValueData[key]["profit"].toFixed(2)}%</span>`;
@@ -27,7 +28,8 @@ async function displayStockList() {
             }
         }
     }
-    await displaySummary();
+    // default display summary and display chart with first stock
+    await displaySummary();//called wo an arg so its default value(undefined) will be assigned for its para
     await displayChart();
 }
 
@@ -36,7 +38,6 @@ async function displaySummary(event) {
     let stockSummary = await fetch("https://mocki.io/v1/643739c6-a043-45f7-9208-239087e003be")
         .then((response) => response.json())
         .then((a) => {
-            // console.log(a.stocksProfileData[0])
             return a.stocksProfileData[0];
         })
         .catch((error) => console.log(error));
@@ -62,48 +63,48 @@ async function displaySummary(event) {
             }
         }
     }
-    
+
     summaryContainer.append(subheading, p);
-} // Declare globally
+}
 
 async function displayChart(stock = "AAPL", period = "5y", event) {
     const response = await fetch("https://mocki.io/v1/3295edc5-d4eb-41d4-931a-4ceb232ff1da");
     const data = await response.json();
-    // console.log(data);
-    chartStock = data["stocksData"][0]; // Store globally
-    // console.log(chartStock);
-    if (!event) {
+    chartStock = data["stocksData"][0]; // Store in globally created chartStock array
+    if (!event) {//if event arg is not given it is undefined which is a falsy value
         createButtons(stock); // Load buttons for AAPL initially
         plotChart(stock, period);
     }
     if (event) {
         for (let stock in chartStock) {
             if (stock != "_id" && stock == event.target.textContent) {
-                createButtons(stock); // Load buttons for AAPL initially
+                createButtons(stock);
                 plotChart(stock, period);
             }
         }
-    } // Default plot for AAPL with 1mo data
+    }
 }
 
 // Function to create chart data for a specific stock and period
 function getChartData(stock, period) {
     const traces = [];
 
-    if (chartStock[stock] && chartStock[stock][period]) {
+    if (chartStock[stock] && chartStock[stock][period]) {//check if respective values available
         const timeStamps = chartStock[stock][period]["timeStamp"];
         const values = chartStock[stock][period]["value"];
 
         // Convert timestamps to readable dates
         const x = timeStamps.map(ts => new Date(ts * 1000).toLocaleDateString("en-US"));
+        // in api,each timestamp is in sec from a earlier respective date,multiply it with 1000  make it millisecond 
+        // create a date obj with this and convert it to a string format to make it human readable in ui
 
         // Create trace for the selected stock
+        // but the obj being pushed to traces must have these specific names as plotly requires
         traces.push({
             x: x,
             y: values,
             mode: 'lines',
-            name: stock,
-            line: {
+            line: {//mode customization key must match mode name
                 color: "#7FFF00",
             }
         });
@@ -120,32 +121,39 @@ function plotChart(stock, period) {
     const maxVal = Math.max(...values);
     const minVal = Math.min(...values);
 
-    const maxIndex = values.indexOf(maxVal);
+    const maxIndex = values.indexOf(maxVal);// maxindex of maxvalue at value array,used to get the timestamp at respective
+    // index
     const minIndex = values.indexOf(minVal);
 
-    const maxDate = new Date(timeStamps[maxIndex] * 1000).toLocaleDateString("en-US");
+    const maxDate = new Date(timeStamps[maxIndex] * 1000).toLocaleDateString("en-US");//it is the date in timestamp array 
+    // at maxindex and converted to date format
     const minDate = new Date(timeStamps[minIndex] * 1000).toLocaleDateString("en-US");
 
+    // trace->Actual data to plot (lines, bars, dots, etc.)
+    // annotations->Labels, arrows, or notes added to highlight info
+    // Each object inside annotations is like a sticky note pointing to a spot like arrows
     const annotations = [
         {
-            x: maxDate,// arrow points towards this x,y cordinate
-            y: maxVal,//for arrow
+            // peak arr
+            x: maxDate,// coordinates of where to point using annotation arrows
+            y: maxVal,
             text: `Peak: $${maxVal}`,
-            showarrow: true,
-            arrowhead: 2,
-            ax: 0,// text is placed in this coodinate with respect to its default position (by def all are 30px below the x,y arrow pointing)
-            ay: -30,//for text
+            showarrayow: true,
+            arrayowhead: 2,// specifies arrayowhead style
+            ax: 0,// text is placed in this coordinate with respect to its default position (by def all are 30px below the x,y arrayow pointing)
+            ay: -30,
             font: { color: 'green', size: 12 },
             bgcolor: 'white'
         },
         {
-            x: minDate,//arrow points towards this x,y cordinate
-            y: minVal,//for arrow
+            // low value arrow
+            x: minDate,
+            y: minVal,
             text: `Low: $${minVal}`,
-            showarrow: true,
-            arrowhead: 2,
-            ax: 0,//for text
-            ay: 30,//for text
+            showarrayow: true,
+            arrayowhead: 2,
+            ax: 0,
+            ay: 30,
             font: { color: 'red', size: 12 },
             bgcolor: 'white'
         }
@@ -161,14 +169,14 @@ function plotChart(stock, period) {
         annotations: annotations,// Add annotations to the chart
     };
 
-    Plotly.newPlot('chart', data, layout);
+    Plotly.newPlot('chart', data, layout);//data is the traces
 
 }
 
 // Function to create buttons for periods and call plotChart with args
 function createButtons(stock) {
     const buttonsContainer = document.getElementById('buttons');
-    buttonsContainer.innerHTML = ""; // Clear previous buttons
+    buttonsContainer.innerHTML = ""; // Clear previous buttons to avoid having repeated buttons
 
     // Create period buttons dynamically
     ["1mo", "3mo", "1y", "5y"].forEach(period => {
@@ -190,5 +198,7 @@ function createButtons(stock) {
 function changeChartAndSummary(event) {
     const stock = event.target.textContent;
     displayChart(stock, "5y", event);
-    displaySummary(event);
+    displaySummary(event);// called with event arg and handled accordingly
 }
+// Book Value = Total Assets − Total Liabilities
+// like If we shut down the company today and sold everything, it tells what would be left for the shareholders.
