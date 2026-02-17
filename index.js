@@ -1,10 +1,10 @@
 let chartStock = {};//this var will be resued across different functions
 
-displayStockList();
+displayStockList();//called to display first one's details right form start of the website
 
 async function getStockList1() {
     // get profit,bookValue of all the stocks
-    return await fetch("https://mocki.io/v1/a8a7e040-aa37-4451-bca3-e561868ec0e7")
+    return await fetch("https://stock-market-api-k9vl.onrender.com/api/stocksstatsdata")//all 3-static apis
         .then((stock) => stock.json())// converts the stock response in json format to a js object
         .then((a) => {
             return a.stocksStatsData[0];
@@ -35,7 +35,7 @@ async function displayStockList() {
 
 async function displaySummary(event) {
     let StockValues = await getStockList1();
-    let stockSummary = await fetch("https://mocki.io/v1/643739c6-a043-45f7-9208-239087e003be")
+    let stockSummary = await fetch("https://stock-market-api-k9vl.onrender.com/api/profiledata")
         .then((response) => response.json())
         .then((a) => {
             return a.stocksProfileData[0];
@@ -45,7 +45,7 @@ async function displaySummary(event) {
     let summaryContainer = document.getElementById("summary");
     let subheading = document.createElement("h2");
     let p = document.createElement("p");
-    if (!event) {
+    if (!event) {//initial first company view
         summaryContainer.innerHTML = "";
         subheading.innerHTML = `<span>AAPL</span>&nbsp;<span class="profit">${StockValues["AAPL"]["profit"]}%</span><span class="bookValue">$${StockValues["AAPL"]["bookValue"]}</span>`;
         p.innerHTML = `<p>${stockSummary["AAPL"]["summary"]}</p>`;
@@ -68,7 +68,7 @@ async function displaySummary(event) {
 }
 
 async function displayChart(stock = "AAPL", period = "5y", event) {
-    const response = await fetch("https://mocki.io/v1/3295edc5-d4eb-41d4-931a-4ceb232ff1da");
+    const response = await fetch("https://stock-market-api-k9vl.onrender.com/api/stocksdata");
     const data = await response.json();
     chartStock = data["stocksData"][0]; // Store in globally created chartStock array
     if (!event) {//if event arg is not given it is undefined which is a falsy value
@@ -180,7 +180,7 @@ function createButtons(stock) {
 
     // Create period buttons dynamically
     ["1mo", "3mo", "1y", "5y"].forEach(period => {
-        let button = document.createElement('button');
+        let button = document.createElement('button');//buttons are created in js as each btn need to have diff
         button.textContent = period;
         button.style.padding = '10px';
         button.style.margin = '5px';

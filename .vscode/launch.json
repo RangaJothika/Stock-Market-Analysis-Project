@@ -8,7 +8,8 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
+            "url": "file://${workspaceFolder}/index.html",//thsi url will beopened when we run this project folder via vscode run
+            //workspacefolder placeholder is replaced by the project's root folder path
             "webRoot": "${workspaceFolder}"
         }
     ]
